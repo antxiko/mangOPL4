@@ -1,0 +1,23 @@
+* text=auto eol=lf
+
+*.v    text eol=lf
+*.sv   text eol=lf
+*.vh   text eol=lf
+*.svh  text eol=lf
+*.cst  text eol=lf
+*.cdc  text eol=lf
+*.sdc  text eol=lf
+*.gprj text eol=lf
+*.tcl  text eol=lf
+*.md   text eol=lf
+*.py   text eol=lf
+*.sh   text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.fs   binary
+*.bin  binary
+*.bit  binary
+*.svf  binary

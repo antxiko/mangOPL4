@@ -1,0 +1,46 @@
+# ── Gowin IDE ──
+impl/
+*.bak
+*.gprj.user
+gw_log/
+*.log
+*.rpt
+*.tcl.bak
+
+# Bitstreams: el .fs final puede publicarse como release; los builds intermedios no se commitean
+*.fs
+*.bin
+*.svf
+
+# ── Verilator / simulación ──
+obj_dir/
+*.vcd
+*.fst
+*.gtkw
+sim/build/
+sim/work/
+
+# ── Compilados nativos ──
+*.o
+*.obj
+*.exe
+*.out
+
+# ── Editores ──
+.vscode/
+*.code-workspace
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Sistema operativo ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Python (para scripts auxiliares en tools/) ──
+__pycache__/
+*.pyc
+.venv/
+venv/

@@ -465,7 +465,7 @@ IO_LOC "SD_DAT[0..3]"  <pinNN>;
 
 Los números de pin exactos hay que leerlos del `.cst` real cuando se clone el repo. No los incluyo aquí porque cualquier copia de memoria es fuente de errores — el `.cst` es la fuente de verdad.
 
-**Primera tarea al empezar en hardware**: abrir el `.cst` del fork y anexarlo aquí completo como apéndice.
+El `.cst` real de wt200b está anexado al final de este documento como **Apéndice A** (commit `d3a54f1` de `herraa1/tnCartWonder`). El **Apéndice B** documenta las diferencias entre la descripción conceptual de este §16 y la realidad de wt200b — los nombres de señales, el número de chips multiplexados y los pines de audio han cambiado respecto al esquema original de tnCart rev1 sobre el que se redactó esta sección.
 
 ---
 
@@ -508,3 +508,154 @@ Cuando se tenga el fork clonado, la WonderTANG en mano y el MSX conectado:
 - Manual técnico MSX (ciclos de bus Z80, pinout del slot): MSX Technical Handbook.
 - Manual YMF262 (OPL3): timings internos, registros.
 - Manual YMF278B (OPL4): mapeo completo incluyendo wavetable (Fase 2).
+
+---
+
+## 20. Apéndice A — `board_wt200b.cst` real
+
+Anexado del submódulo `external/tnCartWonder` commit `d3a54f1` (heads/main), archivo `rtl/src/board/wt200b/board_wt200b.cst`. Fuente de verdad para el pin mapping físico de WonderTANG v2.0b. Si en el futuro se actualiza el submódulo, refrescar este apéndice.
+
+```cst
+// TangNano20k clock
+IO_LOC "CLK_27M" 4;
+IO_PORT "CLK_27M" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// TangNano20k TF (microSD)
+IO_LOC "TF_CMD" 82;
+IO_PORT "TF_CMD" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "TF_DAT3" 81;
+IO_PORT "TF_DAT3" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "TF_DAT2" 80;
+IO_PORT "TF_DAT2" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "TF_DAT1" 85;
+IO_PORT "TF_DAT1" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "TF_DAT0" 84;
+IO_PORT "TF_DAT0" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "TF_SCLK" 83;
+IO_PORT "TF_SCLK" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+
+// TangNano20k TMDS (HDMI, salida del V9990 emulado)
+IO_LOC "tmds_clk_p" 33,34;
+IO_PORT "tmds_clk_p" PULL_MODE=NONE DRIVE=3.5;
+IO_LOC "tmds_data_p[0]" 35,36;
+IO_PORT "tmds_data_p[0]" PULL_MODE=NONE DRIVE=3.5;
+IO_LOC "tmds_data_p[1]" 37,38;
+IO_PORT "tmds_data_p[1]" PULL_MODE=NONE DRIVE=3.5;
+IO_LOC "tmds_data_p[2]" 39,40;
+IO_PORT "tmds_data_p[2]" PULL_MODE=NONE DRIVE=3.5;
+
+// TangNano20k FLASH (SPI interna, almacena ROM Nextor sin microSD)
+IO_LOC "mspi_sclk" 59;
+IO_PORT "mspi_sclk" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "mspi_cs" 60;
+IO_PORT "mspi_cs" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "mspi_miso" 62;
+IO_PORT "mspi_miso" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "mspi_mosi" 61;
+IO_PORT "mspi_mosi" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "mspi_hold" 63;
+IO_PORT "mspi_hold" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+
+// UART
+IO_LOC "UART_RX" 70;
+IO_LOC "UART_TX" 69;
+IO_PORT "UART_RX" IO_TYPE=LVCMOS33;
+IO_PORT "UART_TX" IO_TYPE=LVCMOS33;
+
+// access LED
+IO_LOC "LED" 75;
+IO_PORT "LED" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+
+// cartridge signal
+IO_LOC "CART_DATA_DIR" 52;
+IO_PORT "CART_DATA_DIR" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_CS_n[2]" 19;
+IO_PORT "CART_MUX_CS_n[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_CS_n[1]" 17;
+IO_PORT "CART_MUX_CS_n[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_CS_n[0]" 20;
+IO_PORT "CART_MUX_CS_n[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_WAIT_n" 42;
+IO_PORT "CART_WAIT_n" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_INT_n" 73;
+IO_PORT "CART_INT_n" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_BUSDIR_n" 74;
+IO_PORT "CART_BUSDIR_n" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[7]" 49;
+IO_PORT "CART_DATA_SIG[7]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[6]" 53;
+IO_PORT "CART_DATA_SIG[6]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[5]" 71;
+IO_PORT "CART_DATA_SIG[5]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[4]" 72;
+IO_PORT "CART_DATA_SIG[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[3]" 79;
+IO_PORT "CART_DATA_SIG[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[2]" 86;
+IO_PORT "CART_DATA_SIG[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[1]" 41;
+IO_PORT "CART_DATA_SIG[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_DATA_SIG[0]" 48;
+IO_PORT "CART_DATA_SIG[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[7]" 31;
+IO_PORT "CART_MUX_SIG[7]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[6]" 30;
+IO_PORT "CART_MUX_SIG[6]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[5]" 29;
+IO_PORT "CART_MUX_SIG[5]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[4]" 26;
+IO_PORT "CART_MUX_SIG[4]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[3]" 25;
+IO_PORT "CART_MUX_SIG[3]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[2]" 28;
+IO_PORT "CART_MUX_SIG[2]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[1]" 27;
+IO_PORT "CART_MUX_SIG[1]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_MUX_SIG[0]" 77;
+IO_PORT "CART_MUX_SIG[0]" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_CLOCK" 76;
+IO_PORT "CART_CLOCK" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_WR_n" 16;
+IO_PORT "CART_WR_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_RD_n" 15;
+IO_PORT "CART_RD_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+IO_LOC "CART_SLTSL_n" 18;
+IO_PORT "CART_SLTSL_n" IO_TYPE=LVCMOS33 PULL_MODE=UP BANK_VCCIO=3.3;
+
+// Audio DAC (MAX98357A I2S)
+IO_LOC "DAC_DIN" 54;
+IO_PORT "DAC_DIN" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "DAC_BCLK" 56;
+IO_PORT "DAC_BCLK" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "DAC_LRCLK" 55;
+IO_PORT "DAC_LRCLK" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+IO_LOC "DAC_SDMODE_n" 51;
+IO_PORT "DAC_SDMODE_n" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=8 BANK_VCCIO=3.3;
+```
+
+---
+
+## 21. Apéndice B — Diferencias entre §16 conceptual y wt200b real
+
+El §16 fue redactado tomando como referencia el esquema **conceptual** del cartucho tnCart rev1. La realidad de WonderTANG v2.0b en el codebase `tnCartWonder` introduce variaciones importantes para tener presentes al escribir RTL nuevo:
+
+| Concepto en §16 | Realidad wt200b (commit `d3a54f1`) | Implicación para RTL |
+|---|---|---|
+| Sufijo `_33` (ej. `CLOCK_33`, `IORQ_33`) | Prefijo `CART_*` (ej. `CART_CLOCK`, `CART_RD_n`, `CART_SLTSL_n`) | Usa `CART_*` en módulos nuevos. El `_33` solo aparece en código heredado de tnCart rev1. |
+| 2 chips 74LVC245 controlados por `MSEL0_33`/`MSEL1_33` | **3 chips** 74LVC245 controlados por `CART_MUX_CS_n[2:0]` | El multiplex es distinto. Ver módulo `BOARD_REV1_BUS` (`rtl/src/board/rev1/board_rev1_bus.sv`), reutilizado en wt200b con state machine de 9 ciclos. |
+| `BUS_33[7:0]` multiplexa A0-A7 + D0-D7 | `CART_MUX_SIG[7:0]` multiplexa A8-A15 / A0-A7 / control bus; **`CART_DATA_SIG[7:0]` separado para D0-D7 (no multiplexado)** | El bus de datos tiene pines propios. El multiplex solo cicla address y control. |
+| Multiplex con dos grupos: address + datos | Tres grupos: A8-A15 (CS0), A0-A7 (CS1), control bus (CS2: MERQ/IORQ/CS1/CS2/RESET/RFSH/CS12/M1) | Las señales de control que el §16 trata como pines directos (`IORQ_n`, `MREQ_n`, `RESET_n`, `M1_n`) están multiplexadas en CS2. |
+| Swap de MSEL entre revisiones de placa | No aplica en wt200b: state machine fija en `BOARD_REV1_BUS` | La elección de qué chip activar (`CART_MUX_CS_n`) está hardcoded. Lo que sí varía entre placas son las constraints físicas (`.cst`). |
+| Audio I2S: `I2S_BCLK`, `I2S_LRCLK`, `I2S_DIN` | `DAC_BCLK` (pin 56), `DAC_LRCLK` (pin 55), `DAC_DIN` (pin 54), **`DAC_SDMODE_n` (pin 51) para mute/standby** del MAX98357A | Hay una cuarta señal de control del DAC no documentada en §14. |
+| Sample rate I2S 49.716 kHz (objetivo OPL3/OPL4) | I2S TX corre a ≈ **48 kHz** (CLK_DAC ≈ 1.542 MHz / 32 bits estéreo) en el bitstream stock | Si Fase 1 quiere los 44.1 kHz exactos del MoonSound real, hay que reconfigurar el divisor del DAC o resamplear en RTL. |
+| Reloj 33.8688 MHz necesario para OPL3 (§11/§14) | El proyecto stock usa cristal de **27 MHz** (`CLK_27M`, pin 4). Dos PLLs: `u_pll_base` → 107.4 MHz (`CLK_BASE`/`CLK_MEM`) y `u_pll_tmds` → 134.25 MHz (HDMI/V9990) | Para OPL3 hay que añadir un nuevo `rPLL` o derivar 33.8688 MHz desde uno existente. |
+
+Otros pines wt200b que el §16 no menciona pero existen en el `.cst` (ver Apéndice A):
+
+- **HDMI / TMDS**: `tmds_clk_p` (33,34), `tmds_data_p[0..2]` (35-40) → salida del V9990 emulado.
+- **Flash SPI interna del Tang Nano**: `mspi_sclk/cs/miso/mosi/hold` (59-63) → almacena ROM de Nextor sin necesitar microSD.
+- **microSD**: `TF_SCLK` (83), `TF_CMD` (82), `TF_DAT[0..3]` (84, 85, 80, 81) → SDIO 4-bit completo (no SPI).
+- **LED de actividad**: pin 75.
+- **UART**: `UART_RX` (70), `UART_TX` (69) → debug.
+
+**Recomendación**: cuando se escriba RTL propio para Fase 1, usar los nombres del Apéndice A, no los del §5/§16. El §16 se conserva como introducción conceptual al multiplexado, pero **la fuente de verdad es el Apéndice A**.

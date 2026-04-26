@@ -107,6 +107,7 @@ int main(int argc, char **argv) {
     dut->ic_n = 1;
     ticks(2000);
 
+    opl3_write(0x105, 0x01);
     opl3_write(0x01, 0x20);
     opl3_write(0x20, 0x01);
     opl3_write(0x40, 0x10);
@@ -118,7 +119,7 @@ int main(int argc, char **argv) {
     opl3_write(0x63, 0xf0);
     opl3_write(0x83, 0x77);
     opl3_write(0xe3, 0x00);
-    opl3_write(0xc0, 0x30);
+    opl3_write(0xc0, 0xcb);
     opl3_write(0xa0, 0x44);
     opl3_write(0xb0, 0x32);
 

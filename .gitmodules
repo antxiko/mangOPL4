@@ -1,3 +1,6 @@
 [submodule "external/tnCartWonder"]
 	path = external/tnCartWonder
-	url = https://github.com/herraa1/tnCartWonder
+	url = https://github.com/antxiko/tnCartWonder.git
+[submodule "external/opl3_fpga"]
+	path = external/opl3_fpga
+	url = https://github.com/gtaylormb/opl3_fpga.git

@@ -4,9 +4,9 @@ Estado vivo del avance. Se actualiza al final de cada sesión de trabajo.
 
 ## Resumen ejecutivo
 
-- **Fase actual**: Fase 0 — Preparación del entorno
-- **Última sesión**: 2026-04-23
-- **Siguiente hito**: bitstream stock de tnCartWonder sintetizado y flasheado, MSX arrancando Nextor desde microSD
+- **Fase actual**: Fase 1 — Integración core OPL3 (recién abierta tras cerrar Fase 0)
+- **Última sesión**: 2026-04-26
+- **Siguiente hito**: añadir `gtaylormb/opl3_fpga` como submódulo, validar el core en Verilator contra VGMs antes de tocar el wrapper RTL para MSX
 
 ## Hitos completados
 
@@ -19,16 +19,18 @@ Estado vivo del avance. Se actualiza al final de cada sesión de trabajo.
 - [x] Mapeo arquitectónico de `tnCartWonder/wt200b` documentado (top, mixer, I2S, decodificación, PLLs)
 - [x] `board_wt200b.cst` real anexado a `docs/TANG_MSX_INTERFACE.md` (Apéndice A) + tabla de discrepancias con §16 (Apéndice B)
 - [x] 7-Zip y Audacity instalados (winget)
-- [ ] WSL2 + Ubuntu 24.04 instalado (bloqueado: requiere PowerShell admin del usuario)
-- [ ] Verilator + GTKWave + iverilog en WSL2 (depende de ↑)
-- [ ] Gowin Educative IDE V1.9.9.03+ instalado y licenciado (bloqueado: requiere registro humano + descarga ~3 GB + licencia por correo)
-- [ ] Fork de `tnCartWonder` en cuenta GitHub del usuario (decisión: pospuesto)
-- [ ] Repo `mangopl4` creado en GitHub privado (decisión: pospuesto)
-- [ ] Bitstream stock sintetizado en Gowin IDE
-- [ ] Bitstream flasheado en Tang Nano 20K
-- [ ] MSX arranca Nextor desde microSD
-- [ ] MSX ejecuta un `.com` desde microSD
-- [ ] VGMPlay + openMSX (referencias para Fase 1, no urgente)
+- [x] WSL2 + Ubuntu 24.04 instalado (sesión 2)
+- [x] Verilator 5.020 + GTKWave + iverilog en WSL2 (sesión 2)
+- [x] Gowin Educative IDE V1.9.11.03 instalado y licenciado en `C:\Gowin\Gowin_V1.9.11.03_Education_x64\`
+- [x] Bitstream stock sintetizado en Gowin IDE (`tnCart_board_wt200b.fs`, 7.1 MB; Logic 87%, CLS 96%, PLL 100% — margen muy ajustado)
+- [x] Driver WinUSB instalado en interface JTAG vía Zadig (renombrado a "20K's FRIEND")
+- [x] Bitstream flasheado en Tang Nano 20K vía openFPGALoader (`-b tangnano20k -f`, W25Q64 8 MB)
+- [x] Nextor 2.1.2 + FM BIOS flasheados en flash externa (offsets 0x100000 y 0x120000)
+- [x] **MSX arranca Nextor desde microSD** ✓ (validado en MSX real, sesión 2)
+- [ ] Fork de `tnCartWonder` en cuenta GitHub del usuario (Fase 1 lo necesita)
+- [ ] Repo `mangopl4` creado en GitHub privado (decisión: pospuesto, sigue privado en local)
+- [ ] MSX ejecuta un `.com` desde microSD (no validado aún, no bloquea)
+- [ ] VGMPlay + openMSX (referencias para Fase 1)
 
 ## Log de sesiones
 

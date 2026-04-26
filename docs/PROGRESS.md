@@ -4,9 +4,9 @@ Estado vivo del avance. Se actualiza al final de cada sesión de trabajo.
 
 ## Resumen ejecutivo
 
-- **Fase actual**: Fase 1 — Integración core OPL3 (recién abierta tras cerrar Fase 0)
+- **Fase actual**: Fase 1 — Integración core OPL3 (en marcha, RTL escrito sin sintetizar todavía)
 - **Última sesión**: 2026-04-26
-- **Siguiente hito**: añadir `gtaylormb/opl3_fpga` como submódulo, validar el core en Verilator contra VGMs antes de tocar el wrapper RTL para MSX
+- **Siguiente hito**: sintetizar el bitstream con OPL3 incluido en Gowin, verificar resource utilization y flashear para validar en MSX real con Meridian / MoonBlaster FM / VGMs
 
 ## Hitos completados
 

@@ -4,9 +4,9 @@ Estado vivo del avance. Se actualiza al final de cada sesión de trabajo.
 
 ## Resumen ejecutivo
 
-- **Fase actual**: Fase 1 — Integración core OPL3 (en marcha, RTL escrito sin sintetizar todavía)
+- **Fase actual**: Fase 1 — OPL3 audio path validado en MSX real (escala BASIC suena con volumen normal). Detección VGMPlay pendiente de debug.
 - **Última sesión**: 2026-04-26
-- **Siguiente hito**: sintetizar el bitstream con OPL3 incluido en Gowin, verificar resource utilization y flashear para validar en MSX real con Meridian / MoonBlaster FM / VGMs
+- **Siguiente hito**: correr `tools/msx/opl3tmr.asc` para confirmar que Timer1 overflow funciona; si sí, investigar por qué VGMPlay no detecta (posiblemente busca registros Wave 7E-7F o config switch 7FF6/7FF7 del MoonSound). Probar Meridian / MoonBlaster FM como alternativas.
 
 ## Hitos completados
 

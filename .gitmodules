@@ -3,4 +3,4 @@
 	url = https://github.com/antxiko/tnCartWonder.git
 [submodule "external/opl3_fpga"]
 	path = external/opl3_fpga
-	url = https://github.com/gtaylormb/opl3_fpga.git
+	url = https://github.com/antxiko/opl3_fpga.git

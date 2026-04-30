@@ -21,3 +21,6 @@
 *.bin  binary
 *.bit  binary
 *.svf  binary
+
+# MSX BASIC ASCII listings necesitan CRLF + EOF marker 0x1A
+*.asc  binary

@@ -44,3 +44,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# ── Archivos sueltos no relacionados (heredados de carpeta antigua) ──
+LibreOffice_*.msi

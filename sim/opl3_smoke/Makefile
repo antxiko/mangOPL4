@@ -1,4 +1,4 @@
-CORE := /mnt/c/wt/mangopl4/external/opl3_fpga/fpga
+CORE := /mnt/c/Users/Antxiko/Documents/frutOPL4/external/opl3_fpga/fpga
 INC  := +incdir+$(CORE)/modules/
 
 PKG_SRC := $(CORE)/modules/top_level/pkg/opl3_pkg.sv

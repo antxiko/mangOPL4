@@ -512,11 +512,11 @@ C:\wt\                              ← ruta corta deliberada
 
 ### En WSL2 (para simulación)
 
-WSL2 accede al repo de Windows vía `/mnt/c/wt/wondertang-opl4/`. **No clonar dos veces**.
+WSL2 accede al repo de Windows vía `/mnt/c/Users/Antxiko/Documents/frutOPL4/`. **No clonar dos veces**.
 
 ```bash
 # En terminal WSL2 Ubuntu
-cd /mnt/c/wt/wondertang-opl4
+cd /mnt/c/Users/Antxiko/Documents/frutOPL4
 ```
 
 ⚠️ **Performance de I/O entre WSL2 y NTFS**: acceder a archivos de `/mnt/c/` desde WSL2 es más lento que a archivos nativos de `~/`. Para simulaciones largas (>1 minuto), puede merecer la pena copiar temporalmente a `~/sim-tmp/` en WSL2, simular, y copiar resultados de vuelta. Pero para el 95% de casos, trabajar desde `/mnt/c/` es suficientemente rápido.

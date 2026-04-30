@@ -2,7 +2,7 @@
 
 Implementación FPGA del **Yamaha YMF278B (OPL4 / MoonSound)** sobre Sipeed Tang Nano 20K montado en cartucho **WonderTANG v2.0b**, para uso en MSX real.
 
-Construido sobre [`herraa1/tnCartWonder`](https://github.com/herraa1/tnCartWonder) (fork de [`buppu3/tnCart`](https://github.com/buppu3/tnCart) adaptado a la WonderTANG, con MegaFlashROM SCC+, Nextor 2.1, memoria mapper y emulación V9990). MangOPL4 añade encima la cartridge **OPL3 (MoonSound FM)** mapeada en C4-C7h, integrando el core [`gtaylormb/opl3_fpga`](https://github.com/gtaylormb/opl3_fpga).
+Construido sobre [`herraa1/tnCartWonder`](https://github.com/herraa1/tnCartWonder) (fork de [`buppu3/tnCart`](https://github.com/buppu3/tnCart) adaptado a la WonderTANG, con MegaFlashROM SCC+, Nextor 2.1, memoria mapper y emulación V9990). MangOPL4 añade encima el cartucho **OPL3 (MoonSound FM)** mapeado en C4-C7h, integrando el core [`gtaylormb/opl3_fpga`](https://github.com/gtaylormb/opl3_fpga).
 
 ## Estado
 

@@ -33,6 +33,7 @@ sim/work/
 *.swp
 *.swo
 *~
+.claude/
 
 # ── Sistema operativo ──
 .DS_Store

@@ -36,18 +36,19 @@ openFPGALoader -f -b tangnano20k --external-flash \
 
 `-o` se da en bytes decimales: `1048576 = 0x100000`, `1179648 = 0x120000`.
 
-## Reflasheo solo del bitstream (durante desarrollo)
+## Reflasheo durante desarrollo: SIEMPRE las 3
 
-Cuando solo cambias RTL y ya tienes Nextor + FM ROM en flash, basta con:
+**No flashear el bitstream solo**. Ni siquiera con `--external-flash`. En algunas versiones/builds de openFPGALoader, el erase del bitstream redondea más allá del tamaño binario (probablemente a 1 MB exacto + sectores extra) y pisa el inicio de Nextor en `0x100000`. Confirmado en hardware dos veces (2026-05-06).
+
+**Comando único** que reflashea las 3 imágenes:
 
 ```bash
-openFPGALoader -f -b tangnano20k --external-flash \
-  external/tnCartWonder/rtl/impl/pnr/tnCart_board_wt200b.fs
+bash tools/flash/flash_all.sh
 ```
 
-Esto solo borra los sectores 0–~0xE0000 (los que ocupa la binaria del bitstream, ~900 KB), preservando Nextor (en 0x100000+) y FM BIOS (en 0x120000+).
+(~30 s. Garantiza estado consistente del cartucho. Lee el script si quieres ver los offsets y comandos individuales.)
 
-**Si omites `--external-flash`**, openFPGALoader interpreta otra ruta de programación que en algunas versiones acaba borrando regiones que SÍ contienen tus ROMs. Si te pasa, simplemente reflashea las 3 cosas usando los comandos completos de arriba.
+Si por algún motivo `flash_all.sh` no está disponible, los comandos manuales completos están en la sección anterior — ejecutar las 3 secuencialmente.
 
 ## Drivers (Windows)
 

@@ -47,3 +47,15 @@ venv/
 
 # ── Archivos sueltos no relacionados (heredados de carpeta antigua) ──
 LibreOffice_*.msi
+
+# ── Material con copyright / licencias incompatibles ──
+# YRW801 wave ROM (Yamaha, copyright). Cada usuario aporta su propio dump.
+external/yrw801.rom
+# VGMs de música de juegos comerciales (Doom, etc.) — copyright propietario.
+tools/msx/songs/
+# Fuentes vendoradas de openMSX (GPL-2) — solo referencia local, no se commitea
+# para no contaminar la licencia del repo.
+tools/openmsx_*.cc
+tools/openmsx_*.h
+# Dumps de flash (debug artifacts — pueden contener cualquier cosa).
+tools/flash/flash_readback*.bin

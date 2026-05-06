@@ -2,7 +2,7 @@
 
 Documento de memoria y diseño para continuar el desarrollo en Claude Code / VS Code.
 
-Estado: **planificación (ninguna línea de RTL escrita todavía)**.
+Estado: **Fase 1 (FM/OPL3) cerrada, Fase 2 (Wave/PCM) por empezar**. Bitstream con OPL3 funcional en MSX real: MoonBlaster FM, BASIC OUT, VGMPlay con detección MoonSound, reproducciones múltiples sin cuelgues. Repositorio público en `github.com/antxiko/mangOPL4` desde 2026-05-06.
 
 ---
 
@@ -122,26 +122,34 @@ El MoonSound real tiene dip switch para mover los puertos y evitar choque con MS
 
 ## 6. Roadmap por fases
 
-### Fase 0 — Preparación del entorno (antes de tocar RTL)
+### Fase 0 — Preparación del entorno ✅ COMPLETA (2026-04-26)
 
-- [ ] Confirmar que la WonderTANG arranca en el MSX con su firmware stock (Nextor + SD).
-- [ ] Instalar toolchain: Gowin Educative IDE + `openFPGALoader >= v0.10.0`.
-- [ ] Forkear `herraa1/tnCartWonder` a cuenta propia.
-- [ ] Clonar fork en local y sintetizar el bitstream "tal cual" para verificar que el flujo de build funciona.
-- [ ] Flashear ese bitstream stock y reconfirmar arranque Nextor → MSX-DOS 2 → ejecución de `.com` desde SD.
+- [x] Confirmar que la WonderTANG arranca en el MSX con su firmware stock (Nextor + SD).
+- [x] Instalar toolchain: Gowin Educative IDE V1.9.11.03 + `openFPGALoader v1.0.0`.
+- [x] Forkear `herraa1/tnCartWonder` a `antxiko/tnCartWonder`.
+- [x] Clonar fork en local y sintetizar el bitstream "tal cual".
+- [x] Flashear bitstream stock y confirmar arranque Nextor → MSX-DOS 2 → ejecución de `.com` desde SD.
 
-### Fase 1 — OPL3 básico funcional (objetivo de este proyecto)
+### Fase 1 — OPL3 básico funcional ✅ COMPLETA (2026-05-06)
 
-- [ ] Añadir `gtaylormb/opl3_fpga` como submódulo git en el fork.
-- [ ] **Simulación con Verilator ANTES de tocar hardware**:
-  - Montar testbench que alimente VGMs de OPL3 al core.
-  - Comparar WAV generado contra salida de openMSX/VGMPlay.
-  - Iterar hasta que la diferencia sea mínima (idealmente bit-exacta).
-- [ ] Escribir wrapper MSX en Verilog: decodificación `C4-C7`, handshake con el bus, glue al core.
-- [ ] Generar reloj de 33.8688 MHz con PLL Gowin.
-- [ ] Integrar salida PCM del core al DAC interno del Tang Nano (mezclando con el audio existente de tnCart: SCC+, OPLL, etc.).
-- [ ] Síntesis completa, flasheo, test en MSX real con VGM player de MoonSound y con Meridian / Moonblaster FM.
-- [ ] Gestionar conflicto de puertos con MSX-AUDIO (al menos documentar, idealmente registro de configuración).
+- [x] Añadido `gtaylormb/opl3_fpga` como submódulo (fork `antxiko/opl3_fpga`).
+- [x] Simulación con Verilator (`sim/opl3_smoke/`): pico fundamental 440.0 Hz exactos validado contra config FNUM/BLOCK.
+- [x] Wrapper MSX `cartridge_opl3.sv`: decodificación C4-C7, BUSDIR_n, shadow regs para read-back, stub Wave port (7F=0x20) para detección MoonSound, IRQ generator pulso+gap+repeat con watchdog.
+- [x] Reloj OPL3 a 33.5625 MHz (CLK_TMDS_S /4 vía CLKDIV) con CLK_DIV_COUNT=678 → sample rate 49.502 kHz (-0.03% vs MoonSound real, inaudible).
+- [x] Salida PCM mezclada con SCC+, OPLL, etc. en el mixer existente (atenuadores ext+int).
+- [x] Síntesis (Logic 45%, CLS ~55%) + flasheo + test en MSX real:
+  - MoonBlaster FM ✅ (es el caso "fácil", no usa Timer1)
+  - BASIC OUT directo a C5/C7 ✅
+  - VGMPlay-MSX (Grauw) detecta MoonSound y reproduce VGMs OPL3 ✅
+  - Reproducciones múltiples sin cuelgue ✅
+- [ ] Conflicto de puertos con MSX-AUDIO (C0-C3) — **diferido**: ningún MSX del usuario tiene MSX-AUDIO real. Documentado.
+
+**Bugs descubiertos y resueltos en Fase 1** (capturados en commits del fork `antxiko/opl3_fpga`):
+1. **Gowin trunca `real * real`** (warn EX3791 size 64→32): `CLK_FREQ * TIMER_TICK_INTERVAL` da valor erróneo, ralentiza Timer1 ~30x. Fix: precomputar `TIMER1_TICK_COUNT=2685` y `TIMER2_TICK_COUNT=10740` como `localparam int` en `opl3_pkg_mangopl4.sv`.
+2. **`irq_rst` sticky en gtaylormb**: en YMF262 real es STROBE (write 1 → clear flags → auto a 0), pero el código upstream lo deja como FF persistente. Tras la primera escritura del IRQ handler queda atascado en 1 y cancela todo overflow futuro. Fix: `irq_rst <= 0` default en always_ff de `timers.sv`.
+3. **`assert property` no digerible por Gowin** en `control_operators.sv`: envuelto en `// synthesis translate_off/on`.
+4. **IRQ wiring**: pulso INT_n único de 100 µs colgaba MSX (BIOS handler ~50 µs no acaba a tiempo), pulso 5 µs sin re-arme dejaba sin reproducción tras un IRQ perdido. Fix definitivo: máquina pulso 5 µs + gap 50 µs + repeat continuo mientras `irq_active=1`, con watchdog que tras 32 pulsos sin ack entra en `gave_up` (INT_n alto permanente).
+5. **Backdoor `force_clear_flags`**: sin él, tras exit "natural" de VGMPlay (Timer1 sigue corriendo, ft1 sticky, handler desinstalado) la próxima ejecución no detecta MoonSound. Cuando watchdog se rinde, el wrapper drivea `gave_up=1` que fuerza internamente `st1=0`, `st2=0`, `ft1=0`, `ft2=0` en el core. Cero coste en LUTs, rompe el deadlock sin tocar el bus.
 
 ### Fase 2 — Wavetable OPL4 (futuro, NO es el objetivo inmediato)
 
@@ -272,15 +280,9 @@ Es un proyecto hardware completamente distinto al actual (diseño electrónico, 
 - En commits, rutas de archivo y nombres técnicos: `mangopl4` (minúsculas, sin separadores ni caracteres especiales).
 - En prosa, logos y documentación: `MangOPL4`.
 - Pronunciación: "mango-pi-ele-cuatro" o "mango-OPL4".
-- Repositorio local: `C:\wt\mangopl4\`.
-- Repositorio remoto: `github.com/<usuario>/mangopl4`.
+- Repositorio local: `C:\Users\Antxiko\Documents\frutOPL4\`.
+- Repositorio remoto: `github.com/antxiko/mangOPL4`.
 
 ### Visibilidad del repo
 
-**Privado de momento**. Razones:
-
-- Los documentos contienen detalles del entorno de desarrollo y decisiones que aún pueden cambiar.
-- Se quiere trabajar sin presión externa durante las primeras fases.
-- El YRW801 ROM (Fase 2) tiene copyright Yamaha y es mejor tener el repo privado mientras se define cómo gestionarlo.
-
-**Cuándo pasar a público**: cuando la Fase 1 (OPL3) esté validada funcionando en MSX real y se quiera abrir a la comunidad MSX para feedback. Se revisará en su momento qué archivos pueden quedar dentro del repo público (bitstreams, RTL propio) y cuáles no (cualquier derivado de YRW801, licencias de terceros con restricciones).
+**PÚBLICO desde 2026-05-06** (Fase 1 cerrada). Antes era privado para trabajar sin presión externa. La parte de YRW801 (Fase 2) seguirá tratándose con cuidado: el dump del ROM no se incluirá en el repo (lo aporta el usuario), igual que hacen Wozblaster y similares.

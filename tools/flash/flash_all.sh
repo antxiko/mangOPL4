@@ -20,9 +20,11 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 BITSTREAM="${REPO_ROOT}/external/tnCartWonder/rtl/impl/pnr/tnCart_board_wt200b.fs"
 NEXTOR="${REPO_ROOT}/tools/flash/Nextor-2.1.2.MegaFlashSDSCC.1-slot.bin"
 FMBIOS="${REPO_ROOT}/tools/flash/fmbios.bin"
+YRW801="${REPO_ROOT}/external/yrw801.rom"
 
 NEXTOR_OFFSET=1048576    # 0x100000
 FMBIOS_OFFSET=1179648    # 0x120000
+YRW801_OFFSET=4194304    # 0x400000  (MangOPL4 Fase 2b.4)
 
 if [[ ! -f "${BITSTREAM}" ]]; then
     echo "ERROR: bitstream no encontrado en ${BITSTREAM}" >&2
@@ -37,6 +39,16 @@ for f in "${NEXTOR}" "${FMBIOS}"; do
     fi
 done
 
+# YRW801 es opcional: si no está, no se flashea (build sin Wave funciona
+# igual; el bootloader copia 2 MB de basura a SDRAM pero no se usa hasta
+# que llegue 2c con el path de fetch real desde YRW801).
+HAS_YRW801=0
+if [[ -f "${YRW801}" ]]; then
+    HAS_YRW801=1
+else
+    echo "WARNING: ${YRW801} no encontrada — se omite flasheo de YRW801"
+fi
+
 echo "==> Flashing bitstream..."
 openFPGALoader -f -b tangnano20k --external-flash "${BITSTREAM}"
 
@@ -45,6 +57,11 @@ openFPGALoader -f -b tangnano20k --external-flash -o "${NEXTOR_OFFSET}" "${NEXTO
 
 echo "==> Flashing FM BIOS (offset 0x120000)..."
 openFPGALoader -f -b tangnano20k --external-flash -o "${FMBIOS_OFFSET}" "${FMBIOS}"
+
+if [[ "${HAS_YRW801}" -eq 1 ]]; then
+    echo "==> Flashing YRW801 (offset 0x400000, ~30 s)..."
+    openFPGALoader -f -b tangnano20k --external-flash -o "${YRW801_OFFSET}" "${YRW801}"
+fi
 
 echo ""
 echo "==> Done. Reset MSX to boot Nextor."

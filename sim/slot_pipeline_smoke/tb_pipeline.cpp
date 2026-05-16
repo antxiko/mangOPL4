@@ -1,7 +1,7 @@
 // tb_pipeline.cpp — testbench Verilator para ymf278_slot_pipeline (2c.3.b).
 //
 // Escenarios:
-//   (a) Reset: phase_acc_out=0.
+//   (a) Reset: phase_acc_out_slot0=0.
 //   (b) key_on edge 0→1: phase_acc se resetea a 0.
 //   (c) sample_tick con key_on=1: phase_acc avanza phase_inc por tick.
 //       Con FNUM=0, OCT=0: phase_inc = (1<<10) + 0 = 1024. Tras N ticks,
@@ -46,7 +46,7 @@ static void pulse_sample_tick_internal() {
     dut->CLK = 0; dut->eval(); main_time++;
     dut->CLK = 1; dut->eval(); main_time++;
     dut->sample_tick = 0;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 250; i++) {     // 24 slots × 8 stages + margen
         dut->CLK = 0; dut->eval(); main_time++;
         dut->CLK = 1; dut->eval(); main_time++;
     }
@@ -73,7 +73,7 @@ static void pulse_sample_tick() {
     dut->sample_tick = 1;
     tick();
     dut->sample_tick = 0;
-    tick_n(10);
+    tick_n(250);    // suficiente para hasta 24 slots × 8 stages + margen
 }
 
 static int errors_total = 0;
@@ -88,8 +88,8 @@ static int test_reset_phase_zero() {
     printf("\n=== (a) Reset → phase_acc=0 ===\n");
     do_reset();
     int errors = errors_total;
-    CHECK(dut->phase_acc_out == 0,
-          "phase_acc_out=0x%x esperado 0", dut->phase_acc_out);
+    CHECK(dut->phase_acc_out_slot0 == 0,
+          "phase_acc_out_slot0=0x%x esperado 0", dut->phase_acc_out_slot0);
     int new_errors = errors_total - errors;
     printf("(a) %s\n", new_errors == 0 ? "PASS" : "FAIL");
     return new_errors;
@@ -105,8 +105,8 @@ static int test_keyon_edge_resets() {
     // Edge a 1
     dut->key_on = 1;
     pulse_sample_tick();
-    CHECK(dut->phase_acc_out == 0,
-          "tras edge phase_acc=0x%x esperado 0", dut->phase_acc_out);
+    CHECK(dut->phase_acc_out_slot0 == 0,
+          "tras edge phase_acc=0x%x esperado 0", dut->phase_acc_out_slot0);
     int new_errors = errors_total - errors;
     printf("(b) %s\n", new_errors == 0 ? "PASS" : "FAIL");
     return new_errors;
@@ -124,16 +124,16 @@ static int test_increment() {
     // Edge a 1 (primer pulse resetea phase_acc)
     dut->key_on = 1;
     pulse_sample_tick();
-    CHECK(dut->phase_acc_out == 0,
-          "post-edge phase_acc=0x%x esperado 0", dut->phase_acc_out);
+    CHECK(dut->phase_acc_out_slot0 == 0,
+          "post-edge phase_acc=0x%x esperado 0", dut->phase_acc_out_slot0);
 
     // Pulses consecutivos: phase_acc += phase_inc cada vez
     for (int i = 1; i <= 5; i++) {
         pulse_sample_tick();
         uint32_t expected = i * expected_phase_inc;
-        CHECK(dut->phase_acc_out == expected,
+        CHECK(dut->phase_acc_out_slot0 == expected,
               "tras %d ticks phase_acc=0x%x esperado 0x%x",
-              i, dut->phase_acc_out, expected);
+              i, dut->phase_acc_out_slot0, expected);
     }
     int new_errors = errors_total - errors;
     printf("(c) %s\n", new_errors == 0 ? "PASS" : "FAIL");
@@ -153,20 +153,20 @@ static int test_keyoff_holds() {
     pulse_sample_tick(); // +1024
     pulse_sample_tick(); // +1024 → 3072
 
-    uint32_t held = dut->phase_acc_out;
+    uint32_t held = dut->phase_acc_out_slot0;
     CHECK(held == 3072,
           "antes de key_off phase_acc=0x%x esperado 0x%x", held, 3072);
 
     // Key off
     dut->key_on = 0;
     pulse_sample_tick();
-    CHECK(dut->phase_acc_out == held,
+    CHECK(dut->phase_acc_out_slot0 == held,
           "key_off phase_acc=0x%x esperado 0x%x (hold)",
-          dut->phase_acc_out, held);
+          dut->phase_acc_out_slot0, held);
     pulse_sample_tick();
-    CHECK(dut->phase_acc_out == held,
+    CHECK(dut->phase_acc_out_slot0 == held,
           "key_off+1 phase_acc=0x%x esperado 0x%x (hold)",
-          dut->phase_acc_out, held);
+          dut->phase_acc_out_slot0, held);
     int new_errors = errors_total - errors;
     printf("(d) %s\n", new_errors == 0 ? "PASS" : "FAIL");
     return new_errors;
@@ -181,15 +181,15 @@ static int test_rekeyon_resets() {
 
     dut->key_on = 1;
     pulse_sample_tick(); pulse_sample_tick(); pulse_sample_tick();
-    CHECK(dut->phase_acc_out == 2048,
-          "tras 3 ticks phase_acc=0x%x esperado 2048", dut->phase_acc_out);
+    CHECK(dut->phase_acc_out_slot0 == 2048,
+          "tras 3 ticks phase_acc=0x%x esperado 2048", dut->phase_acc_out_slot0);
 
     dut->key_on = 0;
     pulse_sample_tick();
     dut->key_on = 1; // re-edge
     pulse_sample_tick();
-    CHECK(dut->phase_acc_out == 0,
-          "re-key_on phase_acc=0x%x esperado 0", dut->phase_acc_out);
+    CHECK(dut->phase_acc_out_slot0 == 0,
+          "re-key_on phase_acc=0x%x esperado 0", dut->phase_acc_out_slot0);
     int new_errors = errors_total - errors;
     printf("(e) %s\n", new_errors == 0 ? "PASS" : "FAIL");
     return new_errors;

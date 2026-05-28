@@ -15,7 +15,7 @@ RTL_SRC := \
 	$(TNCART)/wave/ymf278_slot.sv \
 	$(TNCART)/wave/wave_arbiter.sv \
 	$(TNCART)/peripheral/ram/sdram_top_arbiter.sv \
-	$(SHARED)/sdram_stub_yrw.sv \
+	$(SHARED)/sdram_stub_r5b.sv \
 	$(LOCAL)/host_stub.sv \
 	$(LOCAL)/slot_arbiter_top.sv
 

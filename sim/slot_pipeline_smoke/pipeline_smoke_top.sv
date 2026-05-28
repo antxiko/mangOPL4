@@ -31,6 +31,9 @@ module pipeline_smoke_top
     wire [STATE_BITS_PER_SLOT-1:0]     state_write_data;
     wire                               state_write_en;
 
+    // 2c.3.h nuevos puertos: tl/dl/sample_in/atten_out
+    wire signed [15:0] slot0_atten_out_unused;
+
     ymf278_slot_pipeline #(
         .ACTIVE_SLOTS (ACTIVE_SLOTS)
     ) u_pipeline (
@@ -41,12 +44,20 @@ module pipeline_smoke_top
         .fnum                (fnum),
         .octave              (octave),
         .key_on              (key_on),
+        .tl                  (7'd0),                  // sin atten para test phase
+        .dl                  (4'd0),
+        .ar                  (4'd0),                  // sin attack rate
+        .d1r                 (4'd0),
+        .d2r                 (4'd0),
+        .rr                  (4'd0),
+        .slot_sample_in      (16'sh0000),
         .state_read_addr     (state_read_addr),
         .state_read_data     (state_read_data),
         .state_write_addr    (state_write_addr),
         .state_write_data    (state_write_data),
         .state_write_en      (state_write_en),
-        .phase_acc_out_slot0 (phase_acc_out_slot0)
+        .phase_acc_out_slot0 (phase_acc_out_slot0),
+        .slot0_atten_out     (slot0_atten_out_unused)
     );
 
     ymf278_slot_state u_state (

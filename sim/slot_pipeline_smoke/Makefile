@@ -6,6 +6,9 @@ PKG_SRC := \
 
 RTL_SRC := \
 	$(TNCART)/wave/ymf278_slot_state.sv \
+	$(TNCART)/wave/ymf278_exp_lut.sv \
+	$(TNCART)/wave/ymf278_eg_lut.sv \
+	$(TNCART)/wave/ymf278_eg.sv \
 	$(TNCART)/wave/ymf278_slot_pipeline.sv \
 	$(LOCAL)/pipeline_smoke_top.sv
 

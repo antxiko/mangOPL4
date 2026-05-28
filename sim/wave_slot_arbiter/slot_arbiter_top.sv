@@ -35,7 +35,7 @@ module slot_arbiter_top (
     input  wire [9:0]              fnum,
     input  wire signed [3:0]       octave,
     input  wire                    key_on,
-    input  wire [23:0]             start_addr_sdram_in,
+    input  wire [8:0]              wave_num,
 
     // Z80 stub stim
     input  wire                    z80_stim_active,
@@ -53,9 +53,9 @@ module slot_arbiter_top (
     output wire signed [15:0]      sample_out,
     output wire [31:0]             phase_acc_out,
 
-    // Fetch1 observables (via hierarchical)
-    output wire [2:0]              dbg_fetch_state,
-    output wire [15:0]             dbg_fetch_last_idx,
+    // Fetch1 observables (via hierarchical / dbg ports)
+    output wire [3:0]              dbg_fetch_state,
+    output wire [23:0]             dbg_start_addr,
     output wire [7:0]              dbg_fetch_byte_a,
     output wire [7:0]              dbg_fetch_byte_b,
 
@@ -81,7 +81,7 @@ module slot_arbiter_top (
     RAM_IF Ram_z80();       // z80_stub → sdram_top_arbiter BusA
     RAM_IF Ram_sdram();     // sdram_top_arbiter Primary → sdram_stub_yrw
 
-    // === Slot real ===
+    // === Slot real (nuevo: wave_num + header lookup en fetch1) ===
     ymf278_slot u_slot (
         .RESET_n                (RESET_n),
         .CLK                    (CLK),
@@ -90,9 +90,12 @@ module slot_arbiter_top (
         .fnum                   (fnum),
         .octave                 (octave),
         .key_on                 (key_on),
-        .start_addr_sdram_in    (start_addr_sdram_in),
+        .wave_num               (wave_num),
         .sample_out             (sample_out),
         .phase_acc_out          (phase_acc_out),
+        .dbg_start_addr         (dbg_start_addr),
+        .dbg_byte_a             (dbg_fetch_byte_a),
+        .dbg_byte_b             (dbg_fetch_byte_b),
         .Ram                    (Ram_slot)
     );
 
@@ -136,18 +139,15 @@ module slot_arbiter_top (
         .BusB    (Ram_wave)
     );
 
-    // === SDRAM stub ===
-    sdram_stub_yrw u_sdram (
+    // === SDRAM stub (addr[7:0], amplio, sin division) ===
+    sdram_stub_r5b u_sdram (
         .CLK     (CLK),
         .RESET_n (RESET_n),
         .Ram     (Ram_sdram)
     );
 
-    // Observables fetch1
-    assign dbg_fetch_state    = u_slot.u_fetch1.state;
-    assign dbg_fetch_last_idx = u_slot.u_fetch1.last_idx_fetched;
-    assign dbg_fetch_byte_a   = u_slot.u_fetch1.byte_a;
-    assign dbg_fetch_byte_b   = u_slot.u_fetch1.byte_b;
+    // Observables fetch1 (byte_a/b via dbg ports del slot, arriba)
+    assign dbg_fetch_state = u_slot.u_fetch1.state;
 
     // Observables SDRAM primary
     assign dbg_sdram_addr   = Ram_sdram.ADDR;
